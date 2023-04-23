@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: .2em;
+            background-color: bisque;
+        }
+
+        .box {
+            width: 8em;
+            height: 1em;
+            border: 1px solid red;
+            padding: auto auto;
+            font-size: larger;
+            font-weight: bold;
+            padding: .5em;
+            margin: .5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #boxes-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        #slide-menu-container {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 1.5em;
+            height: 100%;
+            background-color: antiquewhite;
+        }
+
+        #slide-menu-container:hover {
+            width: auto;
+        }
+
+        #slide-menu {
+            position: relative;
+            height: 100vh;
+        }
+
+        #slide-menu-item {
+            padding: .2em;
+            display: flex;
+            flex-wrap: nowrap;
+            overflow: hidden;
+        }
+
+        #slide-menu-container:hover #slide-menu-item {
+            border: 5px outset antiquewhite;
+        }
+
+        #slide-menu-item a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+
+        #slide-menu-item::before {
+            content: '👉';
+        }
+
+        #coloradd {
+            float: right;
+        }
+
+        #colorvalue {
+            width: 5em;
+        }
+
+        #hash {
+            color: #aaa;
+        }
+
+        #slide-menu-settings {
+            position: absolute;
+            bottom: .5em;
+            margin: .5em;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="boxes-container">
+        <div id="insertbox" class="box">
+            <span id="hash">#&nbsp;</span>
+            <input contenteditable="true" id="colorvalue" placeholder="FFFFFF"></input>
+            <button id="coloradd">+</button>
+        </div>
+    </div>
+
+
+
+
+    <div id="slide-menu-container">
+        <div id="slide-menu">
+            <div id="slide-menu-item">
+                <a href="https://m1.material.io/style/color.html#color-color-palette" target="_blank">Material.io</a>
+            </div>
+
+
+
+        </div>
+        <div id="slide-menu-settings">
+            <button id="clearbutton">
+                ❌ Clear Colors
+            </button>
+        </div>
+    </div>
+</body>
+
+<script>
+    var boxes = [];
+    loadBoxes();
+    displayBoxes();
+
+
+    const regex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+
+
+    const input = document.getElementById("colorvalue");
+    const button = document.getElementById("coloradd");
+    const clearbutton = document.getElementById("clearbutton");
+
+    function handleKeyPress(event) {
+        if (event.keyCode === 13 || event.target === button) {
+            var colorValue = document.getElementById('colorvalue').value.trim();
+            addBox('#' + colorValue);
+        }
+    }
+
+    input.addEventListener("keypress", handleKeyPress);
+    button.addEventListener("click", handleKeyPress);
+    clearbutton.addEventListener("click", function () {
+        localStorage.clear();
+        window.location.reload();
+    });
+
+
+    //localStorage.clear();
+    //document.write(boxes);
+
+    function addBox(colorHex) {
+        if (regex.test(colorHex)) {
+            boxes.push(colorHex);
+            saveBoxes();
+
+            //display new box
+            displayBox(colorHex)
+            input.value = '';
+        } else {
+            window.alert('use 3 or 6 characters from range: 0-9 and A-F');
+        }
+    }
+
+    function saveBoxes() {
+        localStorage.setItem("colorBoxes", JSON.stringify(boxes));
+    }
+
+    function loadBoxes() {
+        if (localStorage.getItem("colorBoxes")) {
+            boxes = JSON.parse(localStorage.getItem("colorBoxes"));
+        }
+    }
+
+    function displayBoxes() {
+        let boxesContainer = document.getElementById('boxes-container');
+        for (b in boxes) {
+            displayBox(boxes[b]);
+        }
+    }
+
+    function displayBox(colorHex) {
+        let boxesContainer = document.getElementById('boxes-container');
+        let box = document.createElement('div');
+        box.className = 'box';
+        box.style.backgroundColor = colorHex;
+        box.innerHTML = '<span style="color: white;">' + colorHex + '</span> &nbsp;&nbsp; <span style="color: black;">' + colorHex + '</span>';
+        boxesContainer.appendChild(box);
+    }
+
+</script>
+
+</html>
