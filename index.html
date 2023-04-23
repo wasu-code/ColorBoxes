@@ -193,13 +193,14 @@
         box.draggable = true;
         box.innerHTML = '<span style="color: white;">' + colorHex + '</span> &nbsp;&nbsp; <span style="color: black;">' + colorHex + '</span>';
         boxesContainer.appendChild(box);
+
+        makeDraggable(box);
     }
 
-    //Rearrange boxes by draging
-    const boxesElements = document.querySelectorAll('.box');
+    //Draggable boxes
     let draggedBox = null;
 
-    boxesElements.forEach(function (box) {
+    function makeDraggable(box) {
         box.addEventListener('dragstart', function (event) {
             draggedBox = box;
             event.dataTransfer.setData('text/plain', ''); // set data to be transferred
@@ -219,7 +220,7 @@
                 temp.parentNode.removeChild(temp);
             }
         });
-    });
+    }
 
 </script>
 
