@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
     <title>Document</title>
 
     <style>
@@ -189,9 +190,36 @@
         let box = document.createElement('div');
         box.className = 'box';
         box.style.backgroundColor = colorHex;
+        box.draggable = true;
         box.innerHTML = '<span style="color: white;">' + colorHex + '</span> &nbsp;&nbsp; <span style="color: black;">' + colorHex + '</span>';
         boxesContainer.appendChild(box);
     }
+
+    //Rearrange boxes by draging
+    const boxesElements = document.querySelectorAll('.box');
+    let draggedBox = null;
+
+    boxesElements.forEach(function (box) {
+        box.addEventListener('dragstart', function (event) {
+            draggedBox = box;
+            event.dataTransfer.setData('text/plain', ''); // set data to be transferred
+        });
+
+        box.addEventListener('dragover', function (event) {
+            event.preventDefault(); // allow drop
+        });
+
+        box.addEventListener('drop', function (event) {
+            if (draggedBox && draggedBox !== box) {
+                // swap the position of the dragged box and the drop target
+                const temp = document.createElement('div');
+                box.parentNode.insertBefore(temp, box);
+                draggedBox.parentNode.insertBefore(box, draggedBox);
+                temp.parentNode.insertBefore(draggedBox, temp);
+                temp.parentNode.removeChild(temp);
+            }
+        });
+    });
 
 </script>
 
